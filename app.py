@@ -115,3 +115,34 @@ st.markdown(
     "</center>",
     unsafe_allow_html=True
 )
+st.markdown("---")
+st.subheader("🏇 出走馬データ登録")
+
+st.caption("レースに出走する馬の情報を入力できます。")
+
+with st.form("horse_form"):
+    col1, col2 = st.columns(2)
+
+    with col1:
+        number = st.number_input(
+            "馬番", min_value=1, max_value=18, value=1
+        )
+        name = st.text_input("馬名")
+
+    with col2:
+        jockey = st.text_input("騎手名")
+        odds = st.number_input(
+            "単勝オッズ", min_value=0.0, value=1.0
+        )
+
+    submitted = st.form_submit_button("出走馬を登録")
+
+    if submitted:
+        if name.strip():
+            st.success(f"{number}番 {name} を登録しました！")
+            st.write("騎手：", jockey)
+            st.write("単勝オッズ：", odds)
+        else:
+            st.error("馬名を入力してください。")
+
+
