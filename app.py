@@ -46,19 +46,16 @@ race = st.selectbox(
 st.markdown("### レース分析")
 st.info("現在は画面確認用のサンプルデータです。実際の競馬データではありません。")
 
-horses = pd.DataFrame({
-    "馬番": [7, 3, 5, 1, 9],
-    "馬名": [
-        "サンプルホースA",
-        "サンプルホースB",
-        "サンプルホースC",
-        "サンプルホースD",
-        "サンプルホースE"
-    ],
-    "能力評価": [94, 87, 79, 71, 65],
-    "予測勝率(%)": [29, 21, 16, 9, 7],
-    "単勝オッズ": [3.2, 8.5, 12.0, 25.0, 6.0]
-})
+
+if st.session_state.get("registered_horses"):
+    horses = pd.DataFrame(st.session_state.registered_horses)
+    horses["能力評価"] = 0
+    horses["予測勝率(%)"] = 0.0
+else:
+    horses = pd.DataFrame(columns=[
+        "馬番", "馬名", "騎手", "単勝オッズ",
+        "能力評価", "予測勝率(%)"
+    ])
 
 horses["期待値"] = (
     horses["予測勝率(%)"] / 100
