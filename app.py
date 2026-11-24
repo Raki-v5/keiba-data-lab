@@ -118,9 +118,12 @@ st.markdown(
 st.markdown("---")
 st.subheader("🏇 出走馬データ登録")
 
-st.caption("レースに出走する馬の情報を入力できます。")
+st.caption("出走馬を登録して一覧表に追加できます。")
 
-with st.form("horse_form"):
+if "registered_horses" not in st.session_state:
+    st.session_state.registered_horses = []
+
+with st.form("horse_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
 
     with col1:
@@ -138,11 +141,41 @@ with st.form("horse_form"):
     submitted = st.form_submit_button("出走馬を登録")
 
     if submitted:
-        if name.strip():
-            st.success(f"{number}番 {name} を登録しました！")
-            st.write("騎手：", jockey)
-            st.write("単勝オッズ：", odds)
-        else:
+        if not name.strip():
             st.error("馬名を入力してください。")
+
+        elif any(
+            h["馬番"] == number
+            for h in st.session_state.registered_horses
+        ):
+            st.error("その馬番はすでに登録されています。")
+
+        else:
+            st.session_state.registered_horses.append({
+                "馬番": number,
+                "馬名": name.strip(),
+                "騎手": jockey,
+                "単勝オッズ": odds
+            })
+            st.success(f"{name} を登録しました！")
+
+st.markdown("### 📋 登録済み出走馬")
+
+if st.session_state.registered_horses:
+    registered_df = pd.DataFrame(
+        st.session_state.registered_horses
+    )
+    st.dataframe(
+        registered_df,
+        hide_index=True,
+        use_container_width=True
+    )
+    st.caption(
+        f"現在 {len(registered_df)} 頭登録されています。"
+    )
+else:
+    st.info("まだ出走馬が登録されていません。")
+
+
 
 
